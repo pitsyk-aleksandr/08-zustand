@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+
+// Імпорт шрифтів з Google Fonts за допомогою Next.js
+import { Roboto } from 'next/font/google';
 
 // Імпорт компонента TanStackProvider
 // Підключення провайдера React Query,
@@ -14,14 +16,12 @@ import Header from '@/components/Header/Header';
 // Імпорт компонента Footer
 import Footer from '@/components/Footer/Footer';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+// Налаштування шрифтів та їхніх властивостей, таких як вага, підмножини та змінні CSS для використання в стилях.
+const roboto = Roboto({
   subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
+  weight: ['400', '700'],
+  variable: '--font-roboto',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -38,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={roboto.variable}>
         <TanStackProvider>
           <Header />
           <main>
