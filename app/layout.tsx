@@ -21,12 +21,28 @@ const roboto = Roboto({
   subsets: ['latin'],
   weight: ['400', '700'],
   variable: '--font-roboto',
+  // браузер одразу показує текст, навіть якщо шрифт ще не завантажився, замінюючи його на системний шрифт, а потім замінює його на Roboto, коли він завантажується, що покращує користувацький досвід і зменшує час відображення тексту.
   display: 'swap',
 });
 
 export const metadata: Metadata = {
   title: 'NoteHub',
   description: 'NoteHub - Your Personal Note-Taking App - Powered by Next.js and React Query',
+  openGraph: {
+    title: `NoteHub`,
+    description: 'NoteHub - Your Personal Note',
+    url: `https://08-zustand-livid-six.vercel.app/`,
+    siteName: 'NoteHub',
+    images: [
+      {
+        url: 'notehub-og-meta.jpg',
+        width: 1200,
+        height: 630,
+        alt: `NoteHub picture`,
+      },
+    ],
+    type: 'website',
+  },
 };
 
 export default function RootLayout({

@@ -3,6 +3,30 @@
 // сторінки 404, коли користувач намагається отримати доступ до неіснуючої сторінки.
 // ==========================================================================================
 
+// Імпорт Метаданих
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: '404 - Page not found',
+  description: 'The page you are looking for does not exist.',
+  metadataBase: 'https://08-zustand-livid-six.vercel.app/',
+  openGraph: {
+    title: `404 - Page not found`,
+    description: 'The page you are looking for does not exist.',
+    url: `https://08-zustand-livid-six.vercel.app/`,
+    siteName: 'NoteHub',
+    images: [
+      {
+        url: 'notehub-og-meta.jpg',
+        width: 1200,
+        height: 630,
+        alt: `NoteHub picture`,
+      },
+    ],
+    type: 'website',
+  },
+};
+
 // Імпорт стилів для сторінки 404
 import css from './Home.module.css';
 
