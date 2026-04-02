@@ -6,6 +6,7 @@
 // Імпорт Метаданих
 import { Metadata } from 'next';
 
+// Визначення метаданих та openGraph для сторінки 404
 export const metadata: Metadata = {
   title: '404 - Page not found',
   description: 'The page you are looking for does not exist.',
@@ -30,6 +31,7 @@ export const metadata: Metadata = {
 // Імпорт стилів для сторінки 404
 import css from './Home.module.css';
 
+// Компонент NotFound, який відображає повідомлення про помилку 404
 const NotFound = () => {
   return (
     <div className={css.container}>

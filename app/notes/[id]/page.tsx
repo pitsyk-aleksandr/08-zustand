@@ -7,13 +7,6 @@
 // а потім ці дані передаються клієнтському компоненту для відображення.
 // ==========================================================================================
 
-// Імпортуємо Компонент з Next.js
-import type { Metadata } from 'next';
-// Встановлюємо заголовок сторінки
-export const metadata: Metadata = {
-  title: 'Note Details',
-};
-
 // Імпорт
 import { QueryClient, HydrationBoundary, dehydrate } from '@tanstack/react-query';
 
@@ -27,6 +20,36 @@ import { fetchNoteById } from '@/lib/api';
 type Props = {
   params: Promise<{ id: string }>;
 };
+
+// Імпортуємо Metadata з Next.js
+import type { Metadata } from 'next';
+
+// Встановлюємо Метадані, враховуючи параметр з маршруту - фільтрація нотаток
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const note = await fetchNoteById(id);
+
+  return {
+    title: note.title,
+    description: note.content.slice(0, 150) + '...', // Відрізати перші 150 символів для опису
+
+    openGraph: {
+      title: note.title,
+      description: note.content.slice(0, 150) + '...', // Відрізати перші 150 символів для опису
+      url: `https://08-zustand-livid-six.vercel.app/notes/${id}`,
+      siteName: 'NoteHub',
+      images: [
+        {
+          url: 'notehub-og-meta.jpg',
+          width: 1200,
+          height: 630,
+          alt: `NoteHub picture`,
+        },
+      ],
+      type: 'website',
+    },
+  };
+}
 
 // Серверний Компонент NoteDetails, який отримує id нотатки з параметрів маршруту,
 // виконує запит на сервер для отримання деталей нотатки,
