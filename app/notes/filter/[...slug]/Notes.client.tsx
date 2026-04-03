@@ -10,6 +10,9 @@
 // і може використовувати React Hooks та інші клієнтські функції.
 'use client';
 
+// Імпорт модуля Link для навігації між сторінками
+import Link from 'next/link';
+
 // Імпорт модуля useState - для роботи зі станом з REACT
 import { useEffect, useState } from 'react';
 
@@ -62,7 +65,7 @@ import { keepPreviousData } from '@tanstack/react-query';
 import { useDebouncedCallback } from 'use-debounce';
 // import { useParams } from 'next/navigation';
 
-interface NotePageProps{
+interface NotePageProps {
   tag: string;
 }
 const NotesPage = ({ tag }: NotePageProps) => {
@@ -126,7 +129,7 @@ const NotesPage = ({ tag }: NotePageProps) => {
     // щоб уникнути порожнього стану або мерехтіння інтерфейсу під час очікування відповіді від сервера.
     placeholderData: keepPreviousData,
     // При refetchOnMount: true, // Виконує повторний запит при кожному монтуванні компонента
-    refetchOnMount: false,
+    refetchOnMount: true,
     // властивість яка дозволяє виконувати запит лише тоді, коли рядок запиту не порожній,
     // Відключена, бо хочу рендерити при пустому пошуку
     // enabled: query !== '',
@@ -196,6 +199,10 @@ const NotesPage = ({ tag }: NotePageProps) => {
         {/* Пагінація : */}
         {/* Умовний рендеринг компонента Pagination в залежності від кількості сторінок */}
         {totalPages > 1 && <Pagination totalPages={totalPages} setPage={setPage} page={page} />}
+        {/* Посилання на сторінку створення нотатки */}
+        <Link href="/notes/action/create" className={css.button}>
+          Create note +
+        </Link>
         {/* Кнопка створення нотатки */}
         <button className={css.button} onClick={openModal}>
           Create note +
@@ -207,12 +214,12 @@ const NotesPage = ({ tag }: NotePageProps) => {
       )}
       {/* Рендеринг компонента Toaster при наявності повідомлень */}
       <Toaster />
-
+      {/* 
       {isModalOpen && (
         <Modal onClose={closeModal}>
           <NoteForm onClose={closeModal} currentQuery={query} currentTag={tag} />
         </Modal>
-      )}
+      )} */}
     </div>
   );
 };
