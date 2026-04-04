@@ -1,4 +1,5 @@
-// import type { Metadata } from 'next';
+'use client';
+
 import Link from 'next/link';
 
 function EditProfilePage() {

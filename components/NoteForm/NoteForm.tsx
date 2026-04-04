@@ -26,7 +26,8 @@ import type { Note, NoteFormValues, NoteTag } from '@/types/note';
 // Імпорт хук useMutation
 // Мутації в React Query використовуються для виконання операцій, які змінюють дані на сервері,
 // таких як створення, оновлення або видалення записів.
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
+// import { useQueryClient } from '@tanstack/react-query';
 
 // Імпорт бібліотеки react-hot-toast
 // (Додатково - npm install react-hot-toast)
@@ -36,6 +37,9 @@ import toast from 'react-hot-toast';
 
 // Iмпорт функції для HTTP-запроса - створення нотатки
 import { createNote } from '@/lib/api';
+
+// Імпорт хука чернетки нотатки
+import { useNoteDraftStore } from '@/lib/store/noteStore';
 
 // Оголошення інтерфейса NoteFormProps, який описує типи для пропсів компонента.
 // interface NoteFormProps {
@@ -58,6 +62,55 @@ import { createNote } from '@/lib/api';
 export default function NoteForm() {
   const router = useRouter();
 
+  // Викликаємо хук чернетки нотатки і отримуємо значення
+  const { draft, setDraft, clearDraft } = useNoteDraftStore();
+
+  // Оголошуємо функцію для onChange щоб при зміні будь-якого
+  // елемента форми оновити чернетку нотатки в сторі
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    // Коли користувач змінює будь-яке поле форми — оновлюємо стан
+    setDraft({
+      ...draft,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  // -------------------------------------------------------------------------------------------
+  // Mутація для додавання нової нотатки
+  const mutationCreateNote = useMutation({
+    mutationFn: async (note: NoteFormValues) => {
+      // Встановлюємо стан isSubmitting в true, щоб заблокувати кнопку відправки форми під час виконання операції
+      setIsSubmitting(true);
+      // HTTP-request
+      const noteNew = await createNote(note);
+      // Повертаємо нову нотатку, яка була створена на сервері, щоб вона була доступна в onSuccess для відображення повідомлення та оновлення даних
+      return noteNew;
+    },
+    onSuccess: (noteNew: Note) => {
+      // Mutation success!
+      toast.success(`Create note: ${noteNew.title} success !`);
+      // Встановлюємо стан isSubmitting в false, щоб розблокувати кнопку відправки форми
+      setIsSubmitting(false);
+      // При успішному створенні нотатки очищуємо чернетку
+      clearDraft();
+      // Закриваємо вікно після УСПІШНОГО створення нотатки
+      closeForm();
+      // Коли мутація успішно виконується, інвалідовуємо всі запити з ключем "notes",
+      // що змусить React Query повторно виконати ці запити і отримати оновлені дані з сервера.
+      // queryClient.invalidateQueries({ queryKey: ['notes', currentQuery, currentTag, 1] });
+      // queryClient.invalidateQueries({ queryKey: ['notes'] });
+    },
+    onError: (error: Error) => {
+      // An error
+      toast.error(`Created ERROR ${error.message}`);
+      // Встановлюємо стан isSubmitting в false, щоб розблокувати кнопку відправки форми
+      setIsSubmitting(false);
+    },
+  });
+  // ---------------------------------------------------------------------------------------------
+
   // Функція для закриття форми, яка викликається
   // при натисканні кнопки "Cancel" або після успішного створення нотатки
   const closeForm = () => {
@@ -65,7 +118,7 @@ export default function NoteForm() {
     router.back();
     // або можна використовувати router.push для переходу на конкретну сторінку, наприклад:
     // Перехід по повному URL з параметрами, щоб оновити сторінку без прокрутки вгору
-    router.push('/notes/filter/all', { scroll: false });
+    // router.push('/notes/filter/all', { scroll: false });
   };
 
   // Змінна для відстеження стану відправки форми
@@ -110,53 +163,44 @@ export default function NoteForm() {
   };
   //--------------------------------------------------------------------------------------------
 
-  // -------------------------------------------------------------------------------------------
-  // Mутація для додавання нової нотатки
-  const mutationCreateNote = useMutation({
-    mutationFn: async (note: NoteFormValues) => {
-      // Встановлюємо стан isSubmitting в true, щоб заблокувати кнопку відправки форми під час виконання операції
-      setIsSubmitting(true);
-      // HTTP-request
-      const noteNew = await createNote(note);
-      // Повертаємо нову нотатку, яка була створена на сервері, щоб вона була доступна в onSuccess для відображення повідомлення та оновлення даних
-      return noteNew;
-    },
-    onSuccess: (noteNew: Note) => {
-      // Mutation success!
-      toast.success(`Create note: ${noteNew.title} success !`);
-      // Встановлюємо стан isSubmitting в false, щоб розблокувати кнопку відправки форми
-      setIsSubmitting(false);
-      // Закриваємо вікно після УСПІШНОГО створення нотатки
-      closeForm();
-      // Коли мутація успішно виконується, інвалідовуємо всі запити з ключем "notes",
-      // що змусить React Query повторно виконати ці запити і отримати оновлені дані з сервера.
-      // queryClient.invalidateQueries({ queryKey: ['notes', currentQuery, currentTag, 1] });
-      // queryClient.invalidateQueries({ queryKey: ['notes'] });
-    },
-    onError: (error: Error) => {
-      // An error
-      toast.error(`Created ERROR ${error.message}`);
-      // Встановлюємо стан isSubmitting в false, щоб розблокувати кнопку відправки форми
-      setIsSubmitting(false);
-    },
-  });
-  // ---------------------------------------------------------------------------------------------
-
+  // До кожного елемента додаємо defaultValue та onChange щоб задати початкове значення
+  // із чернетки та при зміні оновити чернетку в сторі
   return (
     <form action={handleSubmit} className={css.form}>
       <div className={css.formGroup}>
         <label htmlFor="title">Title</label>
-        <input id="title" type="text" name="title" className={css.input} autoFocus />
+        <input
+          id="title"
+          type="text"
+          name="title"
+          defaultValue={draft?.title}
+          onChange={handleChange}
+          className={css.input}
+          autoFocus
+        />
       </div>
 
       <div className={css.formGroup}>
         <label htmlFor="content">Content</label>
-        <textarea id="content" name="content" rows={8} className={css.textarea} />
+        <textarea
+          id="content"
+          name="content"
+          defaultValue={draft?.content}
+          onChange={handleChange}
+          rows={8}
+          className={css.textarea}
+        />
       </div>
 
       <div className={css.formGroup}>
         <label htmlFor="tag">Tag</label>
-        <select id="tag" name="tag" className={css.select}>
+        <select
+          id="tag"
+          name="tag"
+          defaultValue={draft?.tag}
+          onChange={handleChange}
+          className={css.select}
+        >
           <option value="Todo">Todo</option>
           <option value="Work">Work</option>
           <option value="Personal">Personal</option>

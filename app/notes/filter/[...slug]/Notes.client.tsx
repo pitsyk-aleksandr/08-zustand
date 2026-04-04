@@ -33,12 +33,6 @@ import NoteList from '@/components/NoteList/NoteList';
 // Імпорт компонента Pagination
 import Pagination from '@/components/Pagination/Pagination';
 
-// Імпорт компонента Modal
-import Modal from '@/components/Modal/Modal';
-
-// Імпорт компонента
-import NoteForm from '@/components/NoteForm/NoteForm';
-
 // Iмпорт функції для HTTP-запроса
 import { fetchNotesByTag } from '@/lib/api';
 
@@ -93,7 +87,7 @@ const NotesPage = ({ tag }: NotePageProps) => {
   // Оголошуємо і типизуємо стан - номер поточної сторінки
   const [page, setPage] = useState<number>(1);
   // Оголошуємо і типизуємо стан - чи відкрите модальне вікно
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  // const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   // ---------------------------------------------------------------------------------------------
 
   // Запуск при монтажу компонента
@@ -179,16 +173,16 @@ const NotesPage = ({ tag }: NotePageProps) => {
   // ---------------------------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------------------------
-  // Функції зміни стану модального вікна (відкриття/закриття)
-  const openModal = () => {
-    // Стан - модальне вікно
-    setIsModalOpen(true);
-  };
+  // // Функції зміни стану модального вікна (відкриття/закриття)
+  // const openModal = () => {
+  //   // Стан - модальне вікно
+  //   setIsModalOpen(true);
+  // };
 
-  const closeModal = () => {
-    // Стан - модальне вікно
-    setIsModalOpen(false);
-  };
+  // const closeModal = () => {
+  //   // Стан - модальне вікно
+  //   setIsModalOpen(false);
+  // };
   // ---------------------------------------------------------------------------------------------
 
   return (
@@ -203,10 +197,10 @@ const NotesPage = ({ tag }: NotePageProps) => {
         <Link href="/notes/action/create" className={css.button}>
           Create note +
         </Link>
-        {/* Кнопка створення нотатки */}
-        <button className={css.button} onClick={openModal}>
+        {/* Кнопка створення нотатки через модальне вікно*/}
+        {/* <button className={css.button} onClick={openModal}>
           Create note +
-        </button>
+        </button> */}
       </div>
       {/* Умовний рендеринг компонента NoteList в залежності від кількості нотаток */}
       {notes && notes.length > 0 && (

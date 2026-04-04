@@ -1,9 +1,6 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Profile',
-};
+import Link from 'next/link';
 
 const Profile = () => {
   return (
@@ -14,6 +11,7 @@ const Profile = () => {
         account settings, and customize your preferences. Stay tuned for updates as we continue to
         enhance the features available on this page.
       </p>
+
       <button type="button">
         <Link href="/">Back to Home</Link>
       </button>
