@@ -16,11 +16,6 @@ import Link from 'next/link';
 // Імпорт модуля useState - для роботи зі станом з REACT
 import { useEffect, useState } from 'react';
 
-// Імпорт бібліотеки react-hot-toast (Додатково - npm install react-hot-toast)
-// toast - функція виклика повідомлення,
-// Toaster - компонент для відображення повідомлень
-import toast, { Toaster } from 'react-hot-toast';
-
 // Імпорт модуля зі стилями компонента
 import css from './NotesPage.module.css';
 
@@ -39,7 +34,6 @@ import { fetchNotesByTag } from '@/lib/api';
 // Імпорт хук useQuery, який виконує асинхронні запити та автоматично керує станами завантаження, помилок та збереженням даних, значно спрощуючи роботу з API.
 // (Додатково - npm install @tanstack/react-query)
 import { useQuery } from '@tanstack/react-query';
-// import { useParams } from 'next/navigation';
 
 // Імпортуємо хук useQueryClient
 // import { useQueryClient } from '@tanstack/react-query';
@@ -57,16 +51,11 @@ import { keepPreviousData } from '@tanstack/react-query';
 // Він дозволяє створити "відкладену" версію функції — тобто таку, яка не викликається
 // одразу при кожному вводі символа, а лише через певний час після останньої дії.
 import { useDebouncedCallback } from 'use-debounce';
-// import { useParams } from 'next/navigation';
 
 interface NotePageProps {
   tag: string;
 }
 const NotesPage = ({ tag }: NotePageProps) => {
-  // const NotesPage = () => {
-  //   const { slug } = useParams<{ slug: string[] }>();
-  //   const [tag] = useState(slug[0]);
-
   // ---------------------------------------------------------------------------------------------
   // Потрібно інвалідувати кеш для конкретного queryKey, це змусить React Query
   // зробити повторний запит за колекцією даних, тобто виконати відповідний useQuery.
@@ -77,17 +66,9 @@ const NotesPage = ({ tag }: NotePageProps) => {
   // Оголошуємо і типизуємо стан - рядок з пошуком
   const [query, setQuery] = useState<string>('');
   // *************************************************************
-  // const [query, setQuery] = useState<string>(() => {
-  //   // Отримуємо з localStorage збережений рядок запиту,
-  //   // а якщо його немає, то встановлюємо початкове значення як порожній рядок
-  //   const savedQuery = localStorage.getItem('query');
-  //   return savedQuery ? JSON.parse(savedQuery) : '';
-  // });
-  // *************************************************************
+
   // Оголошуємо і типизуємо стан - номер поточної сторінки
   const [page, setPage] = useState<number>(1);
-  // Оголошуємо і типизуємо стан - чи відкрите модальне вікно
-  // const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   // ---------------------------------------------------------------------------------------------
 
   // Запуск при монтажу компонента
@@ -142,12 +123,10 @@ const NotesPage = ({ tag }: NotePageProps) => {
   // Використовуємо useEffect для відстеження змін в даних
   // та виклику toast-повідомлення, якщо масив нотаток порожній
   useEffect(() => {
-    // Записуємо стан - загальна кількість сторінок
-    // setTotalPages(data?.totalPages ?? 1);
     // Якщо в результаті запиту масив нотаток порожній, виводимо повідомлення:
-    if (data && data.notes && data.notes.length === 0) {
-      toast.error('No notes found for your request');
-    }
+    // if (data && data.notes && data.notes.length === 0) {
+    //   toast.error('No notes found for your request');
+    // }
   }, [data]);
   // ---------------------------------------------------------------------------------------------
 
@@ -172,19 +151,6 @@ const NotesPage = ({ tag }: NotePageProps) => {
   }, [query]);
   // ---------------------------------------------------------------------------------------------
 
-  // ---------------------------------------------------------------------------------------------
-  // // Функції зміни стану модального вікна (відкриття/закриття)
-  // const openModal = () => {
-  //   // Стан - модальне вікно
-  //   setIsModalOpen(true);
-  // };
-
-  // const closeModal = () => {
-  //   // Стан - модальне вікно
-  //   setIsModalOpen(false);
-  // };
-  // ---------------------------------------------------------------------------------------------
-
   return (
     <div className={css.app}>
       <div className={css.toolbar}>
@@ -197,23 +163,9 @@ const NotesPage = ({ tag }: NotePageProps) => {
         <Link href="/notes/action/create" className={css.button}>
           Create note +
         </Link>
-        {/* Кнопка створення нотатки через модальне вікно*/}
-        {/* <button className={css.button} onClick={openModal}>
-          Create note +
-        </button> */}
       </div>
       {/* Умовний рендеринг компонента NoteList в залежності від кількості нотаток */}
-      {notes && notes.length > 0 && (
-        <NoteList notes={notes} currentQuery={query} currentTag={tag} />
-      )}
-      {/* Рендеринг компонента Toaster при наявності повідомлень */}
-      <Toaster />
-      {/* 
-      {isModalOpen && (
-        <Modal onClose={closeModal}>
-          <NoteForm onClose={closeModal} currentQuery={query} currentTag={tag} />
-        </Modal>
-      )} */}
+      {notes && notes.length > 0 && <NoteList notes={notes} />}
     </div>
   );
 };

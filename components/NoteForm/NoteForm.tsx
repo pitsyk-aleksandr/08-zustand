@@ -27,7 +27,7 @@ import type { Note, NoteFormValues, NoteTag } from '@/types/note';
 // Мутації в React Query використовуються для виконання операцій, які змінюють дані на сервері,
 // таких як створення, оновлення або видалення записів.
 import { useMutation } from '@tanstack/react-query';
-// import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 // Імпорт бібліотеки react-hot-toast
 // (Додатково - npm install react-hot-toast)
@@ -61,6 +61,13 @@ import { useNoteDraftStore } from '@/lib/store/noteStore';
 // Компонент NoteForm
 export default function NoteForm() {
   const router = useRouter();
+
+  // Змінна для відстеження стану відправки форми
+  // (використовується для блокування кнопки відправки під час виконання операції)
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Ініціалізація змінної queryClient для роботи з кешем React Query
+  const queryClient = useQueryClient();
 
   // Викликаємо хук чернетки нотатки і отримуємо значення
   const { draft, setDraft, clearDraft } = useNoteDraftStore();
@@ -100,7 +107,7 @@ export default function NoteForm() {
       // Коли мутація успішно виконується, інвалідовуємо всі запити з ключем "notes",
       // що змусить React Query повторно виконати ці запити і отримати оновлені дані з сервера.
       // queryClient.invalidateQueries({ queryKey: ['notes', currentQuery, currentTag, 1] });
-      // queryClient.invalidateQueries({ queryKey: ['notes'] });
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
     },
     onError: (error: Error) => {
       // An error
@@ -120,13 +127,6 @@ export default function NoteForm() {
     // Перехід по повному URL з параметрами, щоб оновити сторінку без прокрутки вгору
     // router.push('/notes/filter/all', { scroll: false });
   };
-
-  // Змінна для відстеження стану відправки форми
-  // (використовується для блокування кнопки відправки під час виконання операції)
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Ініціалізація змінної queryClient для роботи з кешем React Query
-  // const queryClient = useQueryClient();
 
   // ---------------------------------------------------------------------------------------------
   // Створюємо схему валідації для форми за допомогою Yup :

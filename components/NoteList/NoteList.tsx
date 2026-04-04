@@ -28,12 +28,12 @@ interface NoteListProps {
   // Кожна нотатка має тип Note, який описує структуру даних для однієї нотатки.
   notes: Note[];
   // currentQuery - поточний текст пошуку, який використовується для отримання нотаток з сервера.
-  currentQuery: string;
+  // currentQuery: string;
   // currentTag - поточний тег фільтрації.
-  currentTag: string;
+  // currentTag: string;
 }
 
-export default function NoteList({ notes, currentQuery, currentTag }: NoteListProps) {
+export default function NoteList({ notes }: NoteListProps) {
   // Ініціалізація змінної queryClient для роботи з кешем React Query
   const queryClient = useQueryClient();
 
@@ -69,7 +69,7 @@ export default function NoteList({ notes, currentQuery, currentTag }: NoteListPr
       toast.success(`Delete note: ${noteDelete.title} success !`);
       // Коли мутація успішно виконується, інвалідовуємо всі запити з ключем "notes",
       // що змусить React Query повторно виконати ці запити і отримати оновлені дані з сервера.
-      queryClient.invalidateQueries({ queryKey: ['notes', currentQuery, currentTag, 1] });
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
     },
     onError: error => {
       // An error
